@@ -1,16 +1,19 @@
 # =============================================================================
-# Custom Keycloak image with a pre-built identity provider JAR
+# Stage 1 — Download the identity provider JAR
+# =============================================================================
+FROM alpine:3.20 AS downloader
+
+ARG IDP_BINARY_URL=https://github.com/dinoallo/keycloak-feishu/releases/download/v1.0.0/keycloak-feishu.jar
+
+RUN apk add --no-cache curl && \
+    curl -fsSL -o /provider.jar "${IDP_BINARY_URL}"
+
+# =============================================================================
+# Stage 2 — Assemble the Keycloak image
 # =============================================================================
 FROM quay.io/keycloak/keycloak:26.7.4
 
-# ---------------------------------------------------------------------------
-# Download the identity provider JAR
-# ---------------------------------------------------------------------------
-ARG IDP_BINARY_URL=https://github.com/dinoallo/keycloak-feishu/releases/download/v1.0.0/keycloak-feishu.jar
-
-RUN microdnf install -y curl --setopt=install_weak_deps=0 && \
-    curl -fsSL -o /opt/keycloak/providers/keycloak-feishu.jar "${IDP_BINARY_URL}" && \
-    microdnf clean all
+COPY --from=downloader /provider.jar /opt/keycloak/providers/keycloak-feishu.jar
 
 # Enable health and metrics endpoints
 ENV KC_HEALTH_ENABLED=true
