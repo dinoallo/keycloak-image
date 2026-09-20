@@ -1,7 +1,6 @@
 .git/
 .gitignore
-README.md
 .agents/
 .codex/
-*.md
 .worktrees/
+README.md

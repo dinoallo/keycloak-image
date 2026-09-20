@@ -1,2 +1,0 @@
-# Keycloak SPI registration for the Example identity provider
-com.example.idp.ExampleIdentityProviderFactory
