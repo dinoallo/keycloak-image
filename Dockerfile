@@ -19,13 +19,17 @@ COPY --from=downloader /provider.jar /opt/keycloak/providers/keycloak-feishu.jar
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
 
-# Build the optimized Keycloak image (bakes in the provider)
+# ---------------------------------------------------------------------------
+# Pre-optimize the Quarkus build with PostgreSQL as the default database.
+# This avoids the "Changes detected in configuration" warning at startup
+# when users run with KC_DB=postgres (the most common production setup).
+# ---------------------------------------------------------------------------
+ENV KC_DB=postgres
 RUN /opt/keycloak/bin/kc.sh build
 
 # ---------------------------------------------------------------------------
 # Runtime defaults
 # ---------------------------------------------------------------------------
-ENV KC_HOSTNAME=localhost
 EXPOSE 8080 8443
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
