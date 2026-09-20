@@ -8,7 +8,9 @@ FROM quay.io/keycloak/keycloak:26.7.4
 # ---------------------------------------------------------------------------
 ARG IDP_BINARY_URL=https://github.com/dinoallo/keycloak-feishu/releases/download/v1.0.0/keycloak-feishu.jar
 
-RUN curl -fsSL -o /opt/keycloak/providers/keycloak-feishu.jar "${IDP_BINARY_URL}"
+RUN microdnf install -y curl --setopt=install_weak_deps=0 && \
+    curl -fsSL -o /opt/keycloak/providers/keycloak-feishu.jar "${IDP_BINARY_URL}" && \
+    microdnf clean all
 
 # Enable health and metrics endpoints
 ENV KC_HEALTH_ENABLED=true
